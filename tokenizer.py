@@ -136,6 +136,7 @@ class Lexer:
         start = self.pos
         while self.current != None:
             if self.current == apos_type:
+                self.step()
                 break
             str += self.current
             self.step()
@@ -146,6 +147,7 @@ class Lexer:
 #############################################
 # RUN
 #############################################
+
 def run(fn, text):
     lexer = Lexer(fn, text)
 

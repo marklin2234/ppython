@@ -1,5 +1,5 @@
 from error import InvalidSyntaxError
-import tokenizer
+import tokenizer as tokenizer
 from constants import *
 
 #############################################
@@ -11,6 +11,9 @@ class ExprNode:
         self.op = op
         self.left = left
         self.right = right
+
+        self.start = left.start
+        self.end = right.end
     
     def __repr__(self):
         return f'({self.left}, {self.op}, {self.right})'
@@ -18,6 +21,8 @@ class ExprNode:
 class NumNode:
     def __init__(self, tok):
         self.tok = tok
+        self.start = tok.start
+        self.end = tok.end
 
     def __repr__(self):
         return f'{self.tok}'
@@ -26,10 +31,11 @@ class UnaryOpNode:
     def __init__(self, op, node):
         self.op = op
         self.node = node
+        self.start = op.start
+        self.end = node.end
     
     def __repr__(self):
         return f'({self.op}, {self.node})'
-
 
 #############################################
 # PARSE RESULT
@@ -131,16 +137,16 @@ class Parser:
 
 def run(fn, text):
     tokens, error = tokenizer.run(fn, text)
-    # print(tokens)
+    print(tokens)
 
     if error:
         return None, error
     else:
         parser = Parser(tokens)
         ast = parser.parse()
-        # if (ast.err):
-        #     print(ast.err)
-        # else:
-        #     print(ast.node)
+        if (ast.err):
+            print(ast.err)
+        else:
+            print(ast.node)
 
         return ast.node, ast.err

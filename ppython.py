@@ -1,10 +1,10 @@
-import basic
-import interpreter
+import parse
+import interpreter.interpreter as interpreter
 
 while True:
     text = input("in > ")
     
-    ast, err = basic.run('<stdin>', text)
+    ast, err = parse.run('<stdin>', text)
 
     if err:
         print(err)
