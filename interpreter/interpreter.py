@@ -1,5 +1,5 @@
-from interpreter.values import Number
-from parse import ExprNode, NumNode, UnaryOpNode, VarVisitNode, VarAssignNode
+from interpreter.values import Number, String
+from parse import ExprNode, NumNode, UnaryOpNode, VarVisitNode, VarAssignNode, StringNode
 from constants import *
 from error import RTError
 
@@ -63,7 +63,6 @@ class Interpreter:
             value = res.register(self.traverse_ast(node.value, context))
             if res.err:
                 return res
-
             context.variable_table.set(var_name, value)
             return res.success(value).set_context(context)
         elif isinstance(node, VarVisitNode):
@@ -72,6 +71,8 @@ class Interpreter:
             if value is None:
                 return res.failure(RTError(node.start, node.end, f'{var_name} is not assigned', context))
             return res.success(value.set_pos(node.start, node.end)).set_context(context)
+        elif isinstance(node, StringNode):
+            return res.success(String(node.tok.value).set_pos(node.start, node.end)).set_context(context)
         elif isinstance(node, ExprNode):
             left_node = node.left
             right_node = node.right

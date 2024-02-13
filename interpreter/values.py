@@ -16,7 +16,6 @@ class Number:
         return f'{self.value}'
     
     def __add__(self, other):
-        print(other, type(other))
         return Number(self.value + other.value, TT_FLOAT if other.type == TT_FLOAT else TT_INT)
     
     def __sub__(self, other):
@@ -27,3 +26,22 @@ class Number:
     
     def __truediv__(self, other):
         return Number(self.value / other.value, TT_FLOAT)
+    
+class String:
+    def __init__(self, value):
+        self.value = value
+        self.set_pos()
+
+    def set_pos(self, start=None, end=None):
+        self.start = start
+        self.end = end
+        return self
+    
+    def __add__(self, other):
+        return String(self.value + str(other.value))
+    
+    def __sub__(self, other):
+        return String(self.value - str(other.value))
+    
+    def __repr__(self):
+        return f'{self.value}'

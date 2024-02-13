@@ -55,6 +55,15 @@ class VarVisitNode:
 
     def __repr__(self):
         return f'{self.name}'
+    
+class StringNode:
+    def __init__(self, tok):
+        self.tok = tok
+        self.start = tok.start
+        self.end = tok.end
+
+    def __repr__(self):
+        return f'{self.tok}'
 
 #############################################
 # PARSE RESULT
@@ -119,6 +128,9 @@ class Parser:
                 if res.err:
                     return res
                 return res.success(UnaryOpNode(curr, factor))
+        elif curr.type == TT_STRING:
+            self.step()
+            return res.success(StringNode(curr))
         elif curr.type in [TT_INT, TT_FLOAT]:
             self.step()
             return res.success(NumNode(curr))
