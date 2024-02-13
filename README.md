@@ -16,3 +16,11 @@ Variables can be declared using:
 my_variable = 10
 ```
 and are simply stored in a variable table locally. Typing is handled under the hood.
+
+Currently, only basic arithmetic is supported.
+For example,
+```
+> a = 10
+> (13 + a) * (2 - a)
+-184
+```
