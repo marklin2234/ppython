@@ -100,12 +100,17 @@ class Lexer:
             elif curr == '-':
                 tokens.append(Token(TT_SUB, start=self.pos))
                 self.step()
+            elif curr == '=':
+                tokens.append(Token(TT_EQ, start=self.pos))
+                self.step()
             elif curr == '\'' or curr == '\"':
                 apos_type = self.current
                 self.step()
                 tokens.append(self.make_string(apos_type))
             elif curr in DIGITS:
                 tokens.append(self.make_num())
+            elif curr in (LETTERS_DIGITS + "_"):
+                tokens.append(self.make_identifier())
             else:
                 char = self.current
                 start = self.pos.copy()
@@ -142,7 +147,14 @@ class Lexer:
             self.step()
 
         return Token(TT_STRING, str, start, self.pos)
-
+    
+    def make_identifier(self):
+        var_name = ''
+        start = self.pos
+        while self.current in LETTERS_DIGITS and self.current is not None:
+            var_name += self.current
+            self.step()
+        return Token(TT_IDEN, var_name.strip(), start, self.pos)
 
 #############################################
 # RUN

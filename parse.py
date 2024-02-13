@@ -36,6 +36,25 @@ class UnaryOpNode:
     
     def __repr__(self):
         return f'({self.op}, {self.node})'
+    
+class VarAssignNode:
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+        self.start = name.start
+        self.end = value.end
+
+    def __repr__(self):
+        return f'({self.name} = {self.value})'
+        
+class VarVisitNode:
+    def __init__(self, name):
+        self.name = name
+        self.start = name.start
+        self.end = name.end
+
+    def __repr__(self):
+        return f'{self.name}'
 
 #############################################
 # PARSE RESULT
@@ -79,6 +98,7 @@ class Parser:
         self.idx += 1
         if self.idx < len(self.tokens):
             self.curr_tok = self.tokens[self.idx]
+        return self.curr_tok
 
     def parse(self):
         res = self.expr()
@@ -89,6 +109,9 @@ class Parser:
     def factor(self):
         res = ParseResult()
         curr = self.curr_tok
+        if curr.type == TT_IDEN:
+            self.step()
+            return res.success(VarVisitNode(curr))
         if curr.type in [TT_ADD, TT_SUB]:
             if self.idx == 0 or curr.type == TT_SUB:
                 self.step()
@@ -115,6 +138,20 @@ class Parser:
         return self.bin_op(self.factor, [TT_MULT, TT_DIV])
     
     def expr(self):
+        res = ParseResult()
+        if self.curr_tok.type == TT_IDEN:
+            var_name = self.curr_tok
+            res.register(self.step())
+
+            if self.curr_tok.type != TT_EQ:
+                return res.failure(InvalidSyntaxError(self.curr_tok.start, self.curr_tok.end, "Expected \"=\""))
+
+            res.register(self.step())
+            expr = res.register(self.expr())
+
+            if res.err:
+                return res
+            return res.success(VarAssignNode(var_name, expr))
         return self.bin_op(self.term, [TT_ADD, TT_SUB])
     
     def bin_op(self, func, terms):
@@ -137,7 +174,7 @@ class Parser:
 
 def run(fn, text):
     tokens, error = tokenizer.run(fn, text)
-    print(tokens)
+    print("tok", tokens)
 
     if error:
         return None, error
@@ -147,6 +184,6 @@ def run(fn, text):
         if (ast.err):
             print(ast.err)
         else:
-            print(ast.node)
+            print("ast", ast.node)
 
         return ast.node, ast.err
