@@ -201,7 +201,7 @@ class Parser:
 
 def run(fn, text):
     tokens, error = tokenizer.run(fn, text)
-    print("tok", tokens)
+    # print("tok", tokens)
 
     if error:
         return None, error

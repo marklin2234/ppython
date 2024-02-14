@@ -67,7 +67,7 @@ class Interpreter:
         elif isinstance(node, VarVisitNode):
             var_name = node.name.value
             value = context.variable_table.get(var_name)
-            print(context.variable_table.variables)
+            # print(context.variable_table.variables)
             if value is None:
                 return res.failure(RTError(node.start, node.end, f'{var_name} is not assigned', context))
             return res.success(value.set_pos(node.start, node.end)).set_context(context)
