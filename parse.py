@@ -196,16 +196,16 @@ class Parser:
 
 def run(fn, text):
     tokens, error = tokenizer.run(fn, text)
-    print("tok", tokens)
+    # print("tok", tokens)
 
     if error:
         return None, error
     else:
         parser = Parser(tokens)
         ast = parser.parse()
-        if (ast.err):
-            print(ast.err)
-        else:
-            print("ast", ast.node)
+        # if (ast.err):
+        #     print(ast.err)
+        # else:
+        #     print("ast", ast.node)
 
         return ast.node, ast.err
