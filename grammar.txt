@@ -1,5 +1,10 @@
-expr    : term ((PLUS | MINUS) term)
-term    : factor ((MUL | DIV) factor)
-factor  : INT | FLOAT | STRING
-        : (PLUS | MINUS) factor
-        : LPAREN expr RPAREN
+expr          : VAR EQ arith_expr
+              : arith_expr (LT | GT | LEQ | GEQ | COMPARE) arith_expr
+
+arith_expr    : term ((PLUS | MINUS) term)
+term          : factor ((MUL | DIV) factor)
+factor        : INT | FLOAT | STRING
+              : (PLUS | MINUS) factor
+              : LPAREN expr RPAREN
+
+comp          : expr COMPARE expr

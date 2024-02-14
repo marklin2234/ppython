@@ -101,8 +101,33 @@ class Lexer:
                 tokens.append(Token(TT_SUB, start=self.pos))
                 self.step()
             elif curr == '=':
-                tokens.append(Token(TT_EQ, start=self.pos))
+                pos = self.pos
                 self.step()
+                if self.current == '=':
+                    tokens.append(Token(TT_COMPARE, start=pos))
+                    self.step()
+                else:
+                    tokens.append(Token(TT_EQ, start=pos))
+                self.step()
+            elif curr == '>':
+                pos = self.pos
+                self.step()
+                if (self.current == '='):
+                    tokens.append(Token(TT_GEQ, start=pos))
+                    self.step()
+                else:
+                    tokens.append(Token(TT_GT, start=pos))
+            elif curr == '<':
+                pos = self.pos
+                self.step()
+                if (self.current == '='):
+                    tokens.append(Token(TT_LEQ, start=pos))
+                    self.step()
+                else:
+                    tokens.append(Token(TT_LT, start=pos))
+            elif curr == '!':
+                self.step()
+                tokens.append(Token(TT_NOT, start=self.pos))
             elif curr == '\'' or curr == '\"':
                 apos_type = self.current
                 self.step()

@@ -19,6 +19,14 @@ TT_EOF      = 'EOF'
 TT_APOS     = 'APOS'
 TT_IDEN     = 'VAR'
 TT_EQ       = 'EQ'
+TT_LEQ      = 'LEQ'
+TT_GEQ      = 'GEQ'
+TT_GT       = 'GT'
+TT_LT       = 'LT'
+TT_COMPARE  = 'COMPARE'
+TT_NOT      = 'NOT'
+TT_AND      = 'AND'
+TT_OR       = 'OR'
 
-OPERATIONS = ['ADD', 'SUB', 'DIV', 'MULT']
-PARS       = ['LPAR', 'RPAR', 'LSQB', 'RSQB']
+OPERATIONS = [TT_ADD, TT_SUB, TT_DIV, TT_MULT]
+COMPARATORS= [TT_LEQ, TT_GEQ, TT_GT, TT_LT, TT_COMPARE, TT_NOT, TT_AND, TT_OR]

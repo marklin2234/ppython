@@ -1,4 +1,4 @@
-from interpreter.values import Number, String
+from interpreter.values import Boolean, Number, String
 from parse import ExprNode, NumNode, UnaryOpNode, VarVisitNode, VarAssignNode, StringNode
 from constants import *
 from error import RTError
@@ -81,16 +81,10 @@ class Interpreter:
             if res.err: return res
             start = left_node.start
             end = right_node.end
-            if (node.op.type == TT_ADD):
-                return res.success((left + right).set_pos(start, end)).set_context(context)
-            elif (node.op.type == TT_SUB):
-                return res.success((left - right).set_pos(start, end)).set_context(context)
-            elif (node.op.type == TT_MULT):
-                return res.success((left * right).set_pos(start, end)).set_context(context)
-            elif (node.op.type == TT_DIV):
-                if (right == 0):
-                    return res.failure(RTError(start, end, 'Division by zero', context))
-                return res.success((left / right).set_pos(start, end)).set_context(context)
+            if node.op.type in OPERATIONS:
+                return self.perform_arithmetic(node.op.type, left, right, start, end, context)
+            elif node.op.type in COMPARATORS:
+                return self.compare(node.op.type, left, right, start, end, context)
         elif isinstance(node, UnaryOpNode):
             num = res.register(self.traverse_ast(node.node, context))
             if res.err:
@@ -103,6 +97,36 @@ class Interpreter:
             return res.success(Number(node.tok.value, node.tok.type).set_pos(node.tok.start, node.tok.end)).set_context(context)
         
         return res.success(0).set_context(context)
+
+    def perform_arithmetic(self, type_, left, right, start, end, context):
+        res = RTResult()
+        if (type_ == TT_ADD):
+            return res.success((left + right).set_pos(start, end)).set_context(context)
+        elif (type_ == TT_SUB):
+            return res.success((left - right).set_pos(start, end)).set_context(context)
+        elif (type_ == TT_MULT):
+            return res.success((left * right).set_pos(start, end)).set_context(context)
+        elif (type_ == TT_DIV):
+            if (right == 0):
+                return res.failure(RTError(start, end, 'Division by zero', context))
+            return res.success((left / right).set_pos(start, end)).set_context(context)
+    
+    def compare(self, type_, left, right, start, end, context):
+        res = RTResult()
+        if type_ == TT_LEQ:
+            return res.success(Boolean(left <= right).set_pos(start, end)).set_context(context)
+        elif type_ == TT_GEQ:
+            return res.success(Boolean(left >= right).set_pos(start, end)).set_context(context)
+        elif type_ == TT_LT:
+            return res.success(Boolean(left < right).set_pos(start, end)).set_context(context)
+        elif type_ == TT_GT:
+            return res.success(Boolean(left > right).set_pos(start, end)).set_context(context)
+        elif type_ == TT_COMPARE:
+            return res.success(Boolean(left == right).set_pos(start, end)).set_context(context)
+        elif type_ == TT_AND:
+            return res.success(Boolean(left and right).set_pos(start, end)).set_context(context)
+        elif type_ == TT_OR:
+            return res.success(Boolean(left or right).set_pos(start, end)).set_context(context)
 
 glob_var_table = VariableTable()
 

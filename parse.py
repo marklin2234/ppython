@@ -136,7 +136,7 @@ class Parser:
             return res.success(NumNode(curr))
         elif curr.type == TT_LPAR:
             self.step()
-            expr = res.register(self.expr())
+            expr = res.register(self.arith_expr())
             if res.err:
                 return res
             if self.curr_tok.type == TT_RPAR:
@@ -164,6 +164,16 @@ class Parser:
             if res.err:
                 return res
             return res.success(VarAssignNode(var_name, expr))
+        
+        expr = res.register(self.arith_expr())
+        if self.curr_tok.type in COMPARATORS:
+            comparator = self.curr_tok
+            res.register(self.step())
+            right_expr = res.register(self.arith_expr())
+            expr = ExprNode(comparator, expr, right_expr)
+        return res.success(expr)
+
+    def arith_expr(self):
         return self.bin_op(self.term, [TT_ADD, TT_SUB])
     
     def bin_op(self, func, terms):
