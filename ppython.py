@@ -2,7 +2,7 @@ import parse
 import interpreter.interpreter as interpreter
 
 while True:
-    text = input("in > ")
+    text = input(">>> ")
     
     ast, err = parse.run('<stdin>', text)
 

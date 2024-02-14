@@ -1,4 +1,5 @@
 from constants import TT_FLOAT, TT_INT
+from error import InvalidSyntaxError
 
 
 class Number:
@@ -22,6 +23,8 @@ class Number:
         return Number(self.value - other.value, TT_FLOAT if other.type == TT_FLOAT else TT_INT)
     
     def __mul__(self, other):
+        if (isinstance(other, String)):
+            return String(self.value * other.value)
         return Number(self.value * other.value, TT_FLOAT if other.type == TT_FLOAT else TT_INT)
     
     def __truediv__(self, other):
@@ -57,6 +60,11 @@ class String:
     
     def __sub__(self, other):
         return String(self.value - str(other.value))
+    
+    def __mul__(self, other):
+        if not isinstance(other, Number):
+            return InvalidSyntaxError(self.start, other.end, "Can't multiply sequence by non-int of type 'str'")
+        return String(self.value * other.value)
     
     def __repr__(self):
         return f'{self.value}'

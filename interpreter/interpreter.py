@@ -1,7 +1,7 @@
 from interpreter.values import Boolean, Number, String
 from parse import ExprNode, NumNode, UnaryOpNode, VarVisitNode, VarAssignNode, StringNode
 from constants import *
-from error import RTError
+from error import InvalidSyntaxError, RTError
 
 class RTResult:
     def __init__(self):
@@ -105,7 +105,10 @@ class Interpreter:
         elif (type_ == TT_SUB):
             return res.success((left - right).set_pos(start, end)).set_context(context)
         elif (type_ == TT_MULT):
-            return res.success((left * right).set_pos(start, end)).set_context(context)
+            val = left * right
+            if (isinstance(val, InvalidSyntaxError)):
+                return res.failure(val)
+            return res.success(val.set_pos(start, end)).set_context(context)
         elif (type_ == TT_DIV):
             if (right == 0):
                 return res.failure(RTError(start, end, 'Division by zero', context))

@@ -164,9 +164,6 @@ class Parser:
             if self.curr_tok.type != TT_EQ:
                 # return res.failure(InvalidSyntaxError(self.curr_tok.start, self.curr_tok.end, "Expected \"=\""))
                 res.register(self.step_back())
-                expr = res.register(self.arith_expr())
-                if res.err: return res
-                return res.success(expr)
             else:
                 res.register(self.step())
                 expr = res.register(self.expr())
