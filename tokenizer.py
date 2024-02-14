@@ -108,7 +108,6 @@ class Lexer:
                     self.step()
                 else:
                     tokens.append(Token(TT_EQ, start=pos))
-                self.step()
             elif curr == '>':
                 pos = self.pos
                 self.step()
@@ -176,7 +175,7 @@ class Lexer:
     def make_identifier(self):
         var_name = ''
         start = self.pos
-        while self.current in LETTERS_DIGITS and self.current is not None:
+        while self.current is not None and self.current in LETTERS_DIGITS:
             var_name += self.current
             self.step()
         return Token(TT_IDEN, var_name.strip(), start, self.pos)

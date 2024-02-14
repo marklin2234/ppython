@@ -108,6 +108,12 @@ class Parser:
         if self.idx < len(self.tokens):
             self.curr_tok = self.tokens[self.idx]
         return self.curr_tok
+    
+    def step_back(self):
+        self.idx -= 1
+        if (self.idx >= 0):
+            self.curr_tok = self.tokens[self.idx]
+        return self.curr_tok
 
     def parse(self):
         res = self.expr()
@@ -156,14 +162,16 @@ class Parser:
             res.register(self.step())
 
             if self.curr_tok.type != TT_EQ:
-                return res.failure(InvalidSyntaxError(self.curr_tok.start, self.curr_tok.end, "Expected \"=\""))
-
-            res.register(self.step())
-            expr = res.register(self.expr())
-
-            if res.err:
-                return res
-            return res.success(VarAssignNode(var_name, expr))
+                # return res.failure(InvalidSyntaxError(self.curr_tok.start, self.curr_tok.end, "Expected \"=\""))
+                res.register(self.step_back())
+                expr = res.register(self.arith_expr())
+                if res.err: return res
+                return res.success(expr)
+            else:
+                res.register(self.step())
+                expr = res.register(self.expr())
+                if res.err: return res
+                return res.success(VarAssignNode(var_name, expr))
         
         expr = res.register(self.arith_expr())
         if self.curr_tok.type in COMPARATORS:
@@ -196,7 +204,7 @@ class Parser:
 
 def run(fn, text):
     tokens, error = tokenizer.run(fn, text)
-    # print("tok", tokens)
+    print("tok", tokens)
 
     if error:
         return None, error
