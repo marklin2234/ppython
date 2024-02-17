@@ -110,7 +110,7 @@ class Interpreter:
                 return res.failure(val)
             return res.success(val.set_pos(start, end)).set_context(context)
         elif (type_ == TT_DIV):
-            if (right == 0):
+            if (right.value == 0):
                 return res.failure(RTError(start, end, 'Division by zero', context))
             return res.success((left / right).set_pos(start, end)).set_context(context)
     
